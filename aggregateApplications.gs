@@ -11,7 +11,7 @@ class AggregateApplications{
     return this.getSheetValues();
   }
   getSheetValues(){
-    const urlCol = PropertiesService.getScriptProperties().getProperty('inputUrlCol');
+    const urlCol = parseInt(PropertiesService.getScriptProperties().getProperty('inputUrlCol'));
     const targetSheetsValues = this.targetSheetList.map(x => {
     let temp = x.getDataRange().getValues();
     // Delete the first line as it is a heading.
@@ -82,36 +82,6 @@ function aggregateApplications_byForm(){
   const targetValues = new AggregateApplications(targetInfo).sheetValues;
   return targetValues;
 }
-/* 
-function aggregateApplications_first(){
-  const urlCol = PropertiesService.getScriptProperties().getProperty('inputUrlCol');
-  const inputSs = SpreadsheetApp.openByUrl(PropertiesService.getScriptProperties().getProperty('inputSsUrl'));
-  const inputSheetList = inputSs.getSheets();
-  const exclusionSheet = ['入力例', '登録済み一覧'];
-  const targetSheetList = inputSheetList.filter(x => !(exclusionSheet.includes(x.getName())));
-  const targetSheetsValues = targetSheetList.map(x => {
-    let temp = x.getDataRange().getValues();
-    // Delete the first line as it is a heading.
-    temp.shift();
-    // Leave only columns A to E. 
-    temp = temp.map(x => x.slice(0, 5));
-    return temp;
-    }); 
-  let targetValues = targetSheetsValues.reduce((newArr, elm) => newArr.concat(elm), []);
-  // Delete lines that do not contain a URL.
-  targetValues = targetValues.filter(x => x[urlCol] != '');
-  // Get header information 
-  const copyFromSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Web Service');
-  const strHeader = copyFromSheet.getRange(1, 1, 1, copyFromSheet.getLastColumn()).getValues();
-  // Output
-  const outputSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(PropertiesService.getScriptProperties().getProperty('outputSheetName'));
-  outputSheet.clearContents();
-  outputSheet.getRange(1, 1, 1, strHeader[0].length).setValues(strHeader);
-  outputSheet.getRange(2, 1, targetValues.length, targetValues[0].length).setValues(targetValues);
-  // Check URLs
-  checkUrl1stReg();
-}
-*/
 /**
  * If the requested URL is already registered in Config, output "既にconfig登録済", if the same domain exists in the upper line, output "重複", otherwise it is output as "未登録" in the N column.
  * @param none
@@ -126,7 +96,7 @@ function checkUrl1stReg(){
   const targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(targetSheetName);
   const outputCol = 14;
   const outputRawUrlCol = outputCol + 1;
-  const urlCol = PropertiesService.getScriptProperties().getProperty('inputUrlCol');
+  const urlCol = parseInt(PropertiesService.getScriptProperties().getProperty('inputUrlCol'));
   const targetUrlData = targetSheet.getDataRange().getValues().map(x => x[urlCol]);
   const targetDomains = targetUrlData.map(x => {
     const temp1 = x.replace(/^(http|https):\/\//g, '');
@@ -209,4 +179,16 @@ function registerScriptPropertyInputSsInfo2(){
 function registerScriptPropertySheetInfo(){
   PropertiesService.getScriptProperties().setProperty('outputSheetName', '申請情報まとめ');
   PropertiesService.getScriptProperties().setProperty('inputUrlCol', 3);
+}
+/**
+* Add to menu.
+* @param none
+* @return none
+*/
+function onOpen() {
+  const arr = [
+    {name: "申請情報まとめ", functionName: "aggregateApplications"}
+  ];
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  ss.addMenu("申請情報まとめ", arr);
 }
