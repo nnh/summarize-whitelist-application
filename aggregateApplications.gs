@@ -52,9 +52,7 @@ class GetTargetSheetsInfo extends GetTargetSheetsInfoExcluded{
   }
 }
 function aggregateApplications(){
-  const listFirst = aggregateApplications_first();
-  const listByForm = aggregateApplications_byForm();
-  const targetValues = listFirst.concat(listByForm);
+  const targetValues = aggregateApplications_first();
   // Get header information 
   const copyFromSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Web Service');
   const strHeader = copyFromSheet.getRange(1, 1, 1, copyFromSheet.getLastColumn()).getValues();
