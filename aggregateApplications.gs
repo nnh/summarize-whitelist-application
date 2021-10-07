@@ -59,11 +59,14 @@ function aggregateApplications(){
   const strHeader = copyFromSheet.getRange(1, 1, 1, copyFromSheet.getLastColumn()).getValues();
   // Output
   const outputSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(PropertiesService.getScriptProperties().getProperty('outputSheetName'));
+  outputSheet.getFilter().remove();
   outputSheet.clearContents();
   outputSheet.getRange(1, 1, 1, strHeader[0].length).setValues(strHeader);
   outputSheet.getRange(2, 1, targetValues.length, targetValues[0].length).setValues(targetValues);
   // Check URLs
   checkUrl1stReg();
+  // Set filter
+  outputSheet.getRange(1, 1, outputSheet.getDataRange().getLastRow(), outputSheet.getDataRange().getLastColumn()).createFilter();
 }
 function aggregateApplications_first(){
   let target = {};
