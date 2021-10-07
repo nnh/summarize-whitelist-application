@@ -59,7 +59,9 @@ function aggregateApplications(){
   const strHeader = copyFromSheet.getRange(1, 1, 1, copyFromSheet.getLastColumn()).getValues();
   // Output
   const outputSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(PropertiesService.getScriptProperties().getProperty('outputSheetName'));
-  outputSheet.getFilter().remove();
+  if (outputSheet.getFilter()){
+    outputSheet.getFilter().remove();  
+  }
   outputSheet.clearContents();
   outputSheet.getRange(1, 1, 1, strHeader[0].length).setValues(strHeader);
   outputSheet.getRange(2, 1, targetValues.length, targetValues[0].length).setValues(targetValues);
@@ -94,7 +96,8 @@ function checkUrl1stReg(){
   const urlCol = parseInt(PropertiesService.getScriptProperties().getProperty('inputUrlCol'));
   const targetUrlData = targetSheet.getDataRange().getValues().map(x => x[urlCol]);
   const registrationCheckCol = parseInt(PropertiesService.getScriptProperties().getProperty('registrationCheckCol'));
-  const targetDomains = targetUrlData.map(x => {
+  const targetDomains = targetUrlData.map(strUrl => {
+    const x = strUrl.trim();
     let temp2 = '';
     if (x.substr(0, 1) != '!'){
       const temp1 = x.replace(/^(http|https):\/\//g, '');
