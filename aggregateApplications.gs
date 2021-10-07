@@ -16,8 +16,8 @@ class AggregateApplications{
     let temp = x.getDataRange().getValues();
     // Delete the first line as it is a heading.
     temp.shift();
-    // Leave only columns A to E. 
-    temp = temp.map(x => x.slice(0, 5));
+    // Leave only columns A to M. 
+    temp = temp.map(x => x.slice(0, 12));
     return temp;
     }); 
     let targetValues = targetSheetsValues.reduce((newArr, elm) => newArr.concat(elm), []);
